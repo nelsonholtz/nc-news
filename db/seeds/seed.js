@@ -3,6 +3,8 @@ const format = require("pg-format");
 const { convertTimestampToDate } = require("./utils");
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
+  const articleIDValue = {};
+
   // console.log(topicData);
   // console.log(userData);
   // console.log(articleData);
@@ -119,20 +121,34 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         `INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L RETURNING *;`,
         formattedArticles
       );
-      return db.query(insertArticlesQuery);
+      return db.query(insertArticlesQuery).then((outcome) => {
+        const insertedArticles = outcome.rows;
+        // console.log(insertArticlesQuery);
+        // console.log("rows", insertedArticles);
+        // console.log("outcome", outcome);
+
+        // const articleIDValue = {};
+        for (let i = 0; i < insertedArticles.length; i++) {
+          const article = insertedArticles[i];
+          articleIDValue[article.title] = article.article_id;
+        }
+        // console.log(articleIDValue);
+      });
     })
+
     .then(() => {
       const formattedCommentWithTimeStamp = commentData.map(
         convertTimestampToDate
       );
 
       const formattedComment = formattedCommentWithTimeStamp.map(
-        ({ article_id, body, votes = 0, author, created_at }) => {
+        ({ article_title, body, votes = 0, author, created_at }) => {
+          // console.log("comment", commentData);
+          const article_id = articleIDValue[article_title];
           return [article_id, body, votes, author, created_at];
         }
       );
-
-      console.log(formattedComment);
+      console.log("changed artical title", formattedComment);
 
       const insertCommentsQuery = format(
         `INSERT INTO comments (article_id, body, votes, author, created_at) VALUES %L RETURNING *;`,
