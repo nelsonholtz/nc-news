@@ -4,6 +4,8 @@ const db = require("./db/connection.js");
 const endpoints = require("./endpoints.json");
 
 const { getTopics } = require("./controllers/topic.controllers.js");
+const { getArticles } = require("./controllers/articles.controller.js");
+const { getUsers } = require("./controllers/users.controller.js");
 
 // console.log(endpoints);
 
@@ -15,9 +17,7 @@ app.get("/api", (request, response) => {
 
 app.get("/api/topics", getTopics);
 
-// app.get("/api/topics", (request, response) => {
-//   db.query("SELECT * FROM topic").then({ rows });
-//   response.status(200).send({ endpoints });
-// });
+app.get("/api/articles", getArticles);
 
+app.get("/api/users", getUsers);
 module.exports = app;
