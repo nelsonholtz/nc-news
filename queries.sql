@@ -1,3 +1,3 @@
-\c nc_news
+\c nc_news_test
 
-SELECT * FROM articles WHERE article_id = 2
+SELECT comment_id, votes, created_at, author, body, article_id FROM comments WHERE article_id = 1 ORDER BY created_at DESC

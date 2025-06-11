@@ -88,7 +88,7 @@ describe("GET /api/users", () => {
   });
 });
 
-describe.only("GET /api/articles/:article_id", () => {
+describe("GET /api/articles/:article_id", () => {
   test("200: Responds with an array of article objects", () => {
     return request(app)
       .get("/api/articles/2")
@@ -121,8 +121,184 @@ describe.only("GET /api/articles/:article_id", () => {
       .get("/api/articles/1952")
       .expect(404)
       .then(({ body }) => {
-        console.log(body);
         expect(body.msg).toBe("404 Not Found");
       });
   });
 });
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("status 200, responds with an array of comments objects for the article ID", () => {
+    return (
+      request(app)
+        //querie about path
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          const { comments } = body;
+          expect(comments).toBeInstanceOf(Array);
+          expect(comments.length).toBeGreaterThan(1);
+          // ask for help to set up
+          expect(comments).toBeSortedBy("created_at", { descending: true });
+          comments.forEach((comment) => {
+            expect(comment.article_id).toBe(1);
+            expect(typeof comment.comment_id).toBe("number");
+            expect(typeof comment.votes).toBe("number");
+            expect(typeof comment.created_at).toBe("string");
+            expect(typeof comment.author).toBe("string");
+            expect(typeof comment.body).toBe("string");
+            expect(typeof comment.article_id).toBe("number");
+          });
+        })
+      // .catch((err) => {
+      //   console.log("Errorr", err);
+      // })
+    );
+  });
+  test("status: 400, responds with an error message when passed a bad article ID", () => {
+    return request(app)
+      .get("/api/articles/notAnID")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+  test("status: 404, responds with an error messgae when passed with a ID that does not exist", () => {
+    return request(app)
+      .get("/api/articles/1952")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404 Not Found");
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("status: 201, add a comment to the article comment table", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "YOU SHALL NOT PASS!!",
+    };
+
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment.article_id).toBe(3);
+        expect(typeof comment.comment_id).toBe("number");
+        expect(typeof comment.votes).toBe("number");
+        expect(typeof comment.created_at).toBe("string");
+        expect(typeof comment.author).toBe("string");
+        expect(typeof comment.body).toBe("string");
+      });
+  });
+  test("status: 404, responds with error when article_id is valid but does not exist", () => {
+    const newComment = {
+      username: "gandalf",
+      body: "This article does not exist.",
+    };
+
+    // cant get this test to work ask for assistance
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404 Not Found");
+      });
+  });
+  test("status: 400, responds with error when username is missing", () => {
+    const newComment = {
+      body: "No username",
+    };
+
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+  test("status: 400, responds with error when body is missing", () => {
+    const newComment = {
+      username: "gandalf",
+    };
+
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test(" status 200: responds with the article updated", () => {
+    const voteUpdate = { inc_votes: 5 };
+
+    return request(app)
+      .patch("/api/articles/2")
+      .send(voteUpdate)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toHaveProperty("votes");
+        expect(typeof body.article.votes).toBe("number");
+      });
+  });
+  test("status 400: bad request when inc_votes is not a number", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: "five" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+  test("status 400: send article not found when article_id when invalid ID is inserted", () => {
+    return request(app)
+      .patch("/api/articles/not-a-number")
+      .send({ inc_votes: 3 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+});
+
+// describe("DELETE /api/comments/:comment_id", () => {
+//   test("204: Responds with the given comment ID deleted", () => {
+//     return request(app)
+//       .delete("/api/comments/2")
+//       .expect(204)
+//       .then(({ body }) => {
+//         const { comment } = body;
+
+//         expect(comment.comment_id).toBe(2);
+//         expect(typeof comment.article_title).toBe("string");
+//         expect(typeof comment.body).toBe("string");
+//         expect(typeof comment.votes).toBe("number");
+//         expect(typeof comment.author).toBe("string");
+//         expect(typeof comment.created_at).toBe("string");
+//       });
+//   });
+//   test("status: 400, responds with an error message when passed a bad article ID", () => {
+//     return request(app)
+//       .delete("/api/articles/:notAnID")
+//       .expect(400)
+//       .then(({ body }) => {
+//         expect(body.msg).toBe("400 Bad Request");
+//       });
+//   });
+//   test("status: 400, responds with an error messgae when attemping to delete a ID that does not exist", () => {
+//     return request(app)
+//       .delete("/api/articles/99999")
+//       .expect(404)
+//       .then(({ body }) => {
+//         expect(body.msg).toBe("404 Not Found");
+//       });
+//   });
+// });

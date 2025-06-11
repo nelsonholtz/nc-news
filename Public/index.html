@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NC News API</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>NC News API Documentation</h1>
+    </header>
+    <main>
+      <section class="endpoint">
+        <h2>GET /api</h2>
+        <p class="description">
+          serves up a json representation of all the available endpoints of the
+          api
+        </p>
+      </section>
+
+      <section class="endpoint">
+        <h2>GET /api/topics</h2>
+        <p class="description">serves an array of all topics</p>
+        <div class="example">
+          <h3>Example Response:</h3>
+          <pre>
+{
+  "topics": [
+    { 
+      "slug": "football", 
+      "description": "Footie!" 
+    }
+  ]
+}</pre
+          >
+        </div>
+      </section>
+
+      <section class="endpoint">
+        <h2>GET /api/articles</h2>
+        <p class="description">serves an array of all articles</p>
+        <div class="example">
+          <h3>Example Response:</h3>
+          <pre>
+{
+  "articles": [
+    {
+      "title": "The Lord of the Rings",
+      "topic": "fiction",
+      "author": "John Ronald Reuel Tolkien",
+      "created_at": "2018-05-30T15:59:13.341Z",
+      "votes": 0,
+      "comment_count": 6
+    }
+  ]
+}</pre
+          >
+        </div>
+      </section>
+
+      <section class="endpoint">
+        <h2>GET /api/users</h2>
+        <p class="description">serves an array of all users</p>
+        <div class="example">
+          <h3>Example Response:</h3>
+          <pre>
+{
+  "users": [
+    {
+      "username": "The White Wizard",
+      "name": "Gandalf",
+      "avatar_url": "https://example.com/avatar.jpg"
+    }
+  ]
+}</pre
+          >
+        </div>
+      </section>
+
+      <section class="endpoint">
+        <h2>GET /api/articles/:article_id</h2>
+        <p class="description">serves a single article object by article ID</p>
+        <div class="example">
+          <h3>Example Response:</h3>
+          <pre>
+{
+  "article": {
+    "article_id": 2,
+    "author": "John Ronald Reuel Tolkien",
+    "title": "The Lord of the Rings",
+    "body": "Text from the article..",
+    "topic": "fiction",
+    "created_at": "2018-05-30T15:59:13.341Z",
+    "votes": 0,
+    "article_img_url": "https://example.com/image.jpg"
+  }
+}</pre
+          >
+        </div>
+      </section>
+
+      <section class="endpoint">
+        <h2>GET /api/articles/:article_id/comments</h2>
+        <p class="description">
+          serves an array of comments for the given article ID, sorted by
+          created_at (most recent first)
+        </p>
+        <div class="example">
+          <h3>Example Response:</h3>
+          <pre>
+{
+  "comments": [
+    {
+      "comment_id": 5,
+      "votes": 0,
+      "created_at": "2018-05-30T15:59:13.341Z",
+      "author": "Gandalf",
+      "body": "YOU SHALL NOT PASS!!",
+      "article_id": 1
+    }
+  ]
+}</pre
+          >
+        </div>
+      </section>
+
+      <section class="endpoint">
+        <h2>POST /api/articles/:article_id/comments</h2>
+        <p class="description">
+          adds a new comment to the specified article and returns the posted
+          comment
+        </p>
+        <div class="example">
+          <h3>Example Request:</h3>
+          <pre>
+{
+  "username": "Gandalf",
+  "body": "Not all those who wander are lost"
+}</pre
+          >
+          <h3>Example Response:</h3>
+          <pre>
+{
+  "comment": {
+    "comment_id": 19,
+    "article_id": 3,
+    "author": "Gandalf",
+    "body": "Not all those who wander are lost",
+    "votes": 0,
+    "created_at": "2018-05-30T15:59:13.341Z"
+  }
+}</pre
+          >
+        </div>
+      </section>
+
+      <section class="endpoint">
+        <h2>PATCH /api/articles/:article_id</h2>
+        <p class="description">
+          updates the votes on an article by the specified amount and returns
+          the updated article
+        </p>
+        <div class="example">
+          <h3>Example Request:</h3>
+          <pre>
+{
+  "inc_votes": 5
+}</pre
+          >
+          <h3>Example Response:</h3>
+          <pre>
+{
+  "article": {
+    "article_id": 2,
+    "author": "John Ronald Reuel Tolkien",
+    "title": "The Lord of the Rings",
+    "body": "Text from the article..",
+    "topic": "cooking",
+    "created_at": "2018-05-30T15:59:13.341Z",
+    "votes": 5,
+    "article_img_url": "https://example.com/image.jpg"
+  }
+}</pre
+          >
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

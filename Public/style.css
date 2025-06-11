@@ -1,0 +1,58 @@
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+  background-color: rgb(247, 243, 243);
+}
+
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+h1 {
+  color: rgb(17, 25, 61);
+  border-bottom: 3px solid rgb(197, 139, 148);
+  padding-bottom: 15px;
+}
+
+.endpoint {
+  background: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.178);
+}
+
+.endpoint h2 {
+  font-size: 1.7em;
+  color: rgb(148, 100, 107);
+}
+
+.description {
+  color: rgb(158, 104, 112);
+  font-size: 1.1em;
+}
+
+.example {
+  margin-top: 15px;
+  margin-left: 10px;
+  padding: 15px;
+  padding-left: 25px;
+  background-color: rgb(255, 249, 250);
+  border-left: 4px solid rgb(158, 104, 112);
+  border-radius: 0 4px 4px 0;
+}
+
+.example h3 {
+  margin-top: 0;
+  color: rgb(17, 25, 61);
+}
+
+pre {
+  background-color: rgba(11, 20, 58, 0.815);
+  color: white;
+  padding: 20px;
+  border-radius: 4px;
+}
