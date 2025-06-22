@@ -15,11 +15,11 @@ const {
 
 const { getUsers } = require("./controllers/users.controller.js");
 
+const { deleteCommentById } = require("./controllers/comments.controller.js");
+
 // console.log(endpoints);
 
-// app.get("/api", (req, res) => {
-//   res.sendFile(path.join(__dirname, "public", "index.html"));
-// });
+app.use("/", express.static("Public"));
 
 app.use(express.json());
 
@@ -41,9 +41,11 @@ app.get("/api/users", getUsers);
 
 app.patch("/api/articles/:article_id", patchArticleVote);
 
+app.delete("/api/comments/:comment_id", deleteCommentById);
+
 app.use((err, req, res, next) => {
   if (err.status) {
-    res.status(err.status).send({ msg: err.msg });
+    return res.status(err.status).send({ msg: err.msg });
   } else {
     next(err);
   }

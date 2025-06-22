@@ -1,8 +1,28 @@
 const db = require("../db/connection");
 const articles = require("../db/data/test-data/articles");
 
-const fetchArticles = () => {
-  const queryStr = `
+const fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
+  const validSortBy = [
+    "author",
+    "title",
+    "article_id",
+    "topic",
+    "created_at",
+    "votes",
+    "article_img_url",
+    "comment_count",
+  ];
+
+  const validOrder = ["asc", "desc"];
+
+  if (
+    !validSortBy.includes(sort_by) ||
+    !validOrder.includes(order.toLowerCase())
+  ) {
+    return Promise.reject({ status: 400, msg: "400 Bad Request" });
+  }
+
+  let queryStr = `
     SELECT 
       articles.author,
       articles.title,
@@ -14,6 +34,16 @@ const fetchArticles = () => {
       COUNT(comments.comment_id)::INT AS comment_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
+    `;
+
+  const queryValues = [];
+
+  if (topic) {
+    queryStr += ` WHERE articles.topic = $1`;
+    queryValues.push(topic);
+  }
+
+  queryStr += `
     GROUP BY 
       articles.author,
       articles.title,
@@ -22,20 +52,30 @@ const fetchArticles = () => {
       articles.created_at,
       articles.votes,
       articles.article_img_url
-    ORDER BY articles.created_at DESC;
+    ORDER BY ${sort_by} ${order.toUpperCase()};
   `;
 
-  return db.query(queryStr).then(({ rows }) => {
+  return db.query(queryStr, queryValues).then(({ rows }) => {
     return rows;
   });
 };
 
 const fetchArticleID = (article_id) => {
   return db
-    .query("SELECT * FROM articles WHERE article_id = $1", [article_id])
+    .query(
+      `
+      SELECT 
+        articles.*, 
+        COUNT(comments.comment_id)::INT AS comment_count
+      FROM articles
+      LEFT JOIN comments 
+        ON comments.article_id = articles.article_id
+      WHERE articles.article_id = $1
+      GROUP BY articles.article_id;
+      `,
+      [article_id]
+    )
     .then(({ rows }) => {
-      // console.log("rose2", rows);
-      // review code to possible refector
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "404 Not Found" });
       }

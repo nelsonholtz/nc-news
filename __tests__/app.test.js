@@ -5,10 +5,6 @@ const db = require("../db/connection.js");
 const seed = require("../db/seeds/seed.js");
 const data = require("../db/data/test-data");
 
-/* Set up your test imports here */
-
-/* Set up your beforeEach & afterAll functions here */
-
 beforeEach(() => {
   return seed(data);
 });
@@ -122,6 +118,16 @@ describe("GET /api/articles/:article_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("404 Not Found");
+      });
+  });
+  test("responds with article and comment_count", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toHaveProperty("comment_count");
+        expect(typeof body.article.comment_count).toBe("number");
+        expect(body.article.comment_count).toBeGreaterThanOrEqual(0);
       });
   });
 });
@@ -269,36 +275,85 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
-// describe("DELETE /api/comments/:comment_id", () => {
-//   test("204: Responds with the given comment ID deleted", () => {
-//     return request(app)
-//       .delete("/api/comments/2")
-//       .expect(204)
-//       .then(({ body }) => {
-//         const { comment } = body;
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: Responds with the given comment ID deleted", () => {
+    return request(app).delete("/api/comments/2").expect(204);
+  });
+  test("status: 400, responds with an error message when passed a bad article ID", () => {
+    return request(app)
+      .delete("/api/comments/:notAnID")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+  test("status: 404, responds with an error messgae when attemping to delete a ID that does not exist", () => {
+    return request(app)
+      .delete("/api/comments/99999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404 Not Found");
+      });
+  });
+});
 
-//         expect(comment.comment_id).toBe(2);
-//         expect(typeof comment.article_title).toBe("string");
-//         expect(typeof comment.body).toBe("string");
-//         expect(typeof comment.votes).toBe("number");
-//         expect(typeof comment.author).toBe("string");
-//         expect(typeof comment.created_at).toBe("string");
-//       });
-//   });
-//   test("status: 400, responds with an error message when passed a bad article ID", () => {
-//     return request(app)
-//       .delete("/api/articles/:notAnID")
-//       .expect(400)
-//       .then(({ body }) => {
-//         expect(body.msg).toBe("400 Bad Request");
-//       });
-//   });
-//   test("status: 400, responds with an error messgae when attemping to delete a ID that does not exist", () => {
-//     return request(app)
-//       .delete("/api/articles/99999")
-//       .expect(404)
-//       .then(({ body }) => {
-//         expect(body.msg).toBe("404 Not Found");
-//       });
-//   });
-// });
+describe("GET /api/articles (with sort_by & order queries)", () => {
+  test("200: returns articles sorted by date (default)", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  test("200: sorts by author in ascending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("author", { ascending: true });
+      });
+  });
+
+  test("400: responds with an error if sort_by is invalid", () => {
+    return request(app)
+      .get("/api/articles?sort_by=not_a_column")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+
+  test("400: responds with an error if order is invalid", () => {
+    return request(app)
+      .get("/api/articles?order=sideways")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+});
+
+describe("GET /api/articles (topic query)", () => {
+  test("200: filters articles by topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBeGreaterThan(0);
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+
+  test("200: returns empty array if no articles match topic", () => {
+    return request(app)
+      .get("/api/articles?topic=notarealtopic")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      });
+  });
+});
