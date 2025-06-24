@@ -1,10 +1,10 @@
+const cors = require("cors");
 const express = require("express");
 const app = express();
 const db = require("./db/connection.js");
 const endpoints = require("./endpoints.json");
 const path = require("path");
 const { getTopics } = require("./controllers/topic.controllers.js");
-const cors = require("cors");
 
 const {
   getArticles,
