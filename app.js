@@ -6,6 +6,8 @@ const endpoints = require("./endpoints.json");
 const path = require("path");
 const { getTopics } = require("./controllers/topic.controllers.js");
 
+app.use(cors());
+
 const {
   getArticles,
   getArticleID,
@@ -41,8 +43,6 @@ app.get("/api/users", getUsers);
 app.patch("/api/articles/:article_id", patchArticleVote);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
-
-app.use(cors());
 
 app.use((err, req, res, next) => {
   if (err.status) {
