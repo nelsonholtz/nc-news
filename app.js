@@ -18,7 +18,10 @@ const {
 
 const { getUsers } = require("./controllers/users.controller.js");
 
-const { deleteCommentById } = require("./controllers/comments.controller.js");
+const {
+  deleteCommentById,
+  patchCommentVote,
+} = require("./controllers/comments.controller.js");
 
 app.use("/", express.static("Public"));
 
@@ -41,6 +44,8 @@ app.post("/api/articles/:article_id/comments", postArticleComment);
 app.get("/api/users", getUsers);
 
 app.patch("/api/articles/:article_id", patchArticleVote);
+
+app.patch("/api/comments/:comment_id", patchCommentVote);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
 

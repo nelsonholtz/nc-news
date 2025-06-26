@@ -357,3 +357,36 @@ describe("GET /api/articles (topic query)", () => {
       });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  test(" status 200: responds with the comment updated", () => {
+    const voteUpdate = { inc_votes: 5 };
+
+    return request(app)
+      .patch("/api/comments/2")
+      .send(voteUpdate)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toHaveProperty("votes");
+        expect(typeof body.comment.votes).toBe("number");
+      });
+  });
+  test("status 400: bad request when inc_votes is not a number", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: "five" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+  test("status 400: send article not found when comment_id when invalid ID is inserted", () => {
+    return request(app)
+      .patch("/api/comments/not-a-number")
+      .send({ inc_votes: 3 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+});
