@@ -226,6 +226,53 @@
           <pre>{}</pre>
         </div>
       </section>
+
+      <section class="endpoint">
+        <h2>GET /api/users/:username</h2>
+        <p class="description">Retrieves a user object by their username</p>
+        <div class="example">
+          <h3>Example Request:</h3>
+          <pre>{}</pre>
+          <h3>Example Response:</h3>
+          <pre>
+{
+  "user": {
+    "username": "jessjelly",
+    "name": "Jess Jelly",
+    "avatar_url": "https://example.com/avatar.jpg"
+  }
+}</pre
+          >
+        </div>
+      </section>
+
+      <section class="endpoint">
+        <h2>POST /api/users</h2>
+        <p class="description">
+          Creates a new user with a unique username, name, and avatar URL.
+          Responds with the newly created user object.
+        </p>
+        <div class="example">
+          <h3>Example Request:</h3>
+          <pre>
+{
+  "username": "newuser123",
+  "name": "New User",
+  "avatar_url": "https://example.com/newuser-avatar.jpg"
+}</pre
+          >
+          <h3>Example Response:</h3>
+          <pre>
+{
+  "user": {
+    "username": "newuser123",
+    "name": "New User",
+    "avatar_url": "https://example.com/newuser-avatar.jpg"
+  }
+}</pre
+          >
+        </div>
+      </section>
     </main>
   </body>
 </html>

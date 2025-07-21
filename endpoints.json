@@ -140,5 +140,22 @@
         "avatar_url": "https://example.com/avatar.jpg"
       }
     }
+  },
+
+  "POST /api/users": {
+    "description": "Creates a new user with a unique username, name, and avatar URL. Responds with the newly created user object.",
+    "queries": [],
+    "exampleRequestBody": {
+      "username": "newuser123",
+      "name": "New User",
+      "avatar_url": "https://example.com/newuser-avatar.jpg"
+    },
+    "exampleResponse": {
+      "user": {
+        "username": "newuser123",
+        "name": "New User",
+        "avatar_url": "https://example.com/newuser-avatar.jpg"
+      }
+    }
   }
 }
