@@ -390,3 +390,38 @@ describe("/api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("/api/users/:username", () => {
+  test("status 200: responds with the correct user object", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toEqual(
+          expect.objectContaining({
+            username: "butter_bridge",
+            name: "jonny",
+            avatar_url: expect.any(String),
+          })
+        );
+      });
+  });
+
+  test("status 404: responds with 'User not found' when username does not exist", () => {
+    return request(app)
+      .get("/api/users/nonexistent_user")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("User not found");
+      });
+  });
+
+  test("status 400: responds with '400 Bad Request' when username is invalid format", () => {
+    return request(app)
+      .get("/api/users/!@#$%")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+});

@@ -127,5 +127,18 @@
     "description": "deletes the comment with the given comment_id and responds with no content",
     "queries": [],
     "exampleResponse": {}
+  },
+
+  "GET /api/users/:username": {
+    "description": "retrieves a user object by their username",
+    "queries": [],
+    "exampleRequestBody": {},
+    "exampleResponse": {
+      "user": {
+        "username": "jessjelly",
+        "name": "Jess Jelly",
+        "avatar_url": "https://example.com/avatar.jpg"
+      }
+    }
   }
 }
