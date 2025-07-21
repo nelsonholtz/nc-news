@@ -21,7 +21,11 @@ const {
   patchArticleVote,
 } = require("./controllers/articles.controller.js");
 
-const { getUsers, getUserName } = require("./controllers/users.controller.js");
+const {
+  getUsers,
+  getUserName,
+  postNewUser,
+} = require("./controllers/users.controller.js");
 
 const {
   deleteCommentById,
@@ -41,6 +45,7 @@ app.get("/api/topics", getTopics);
 // Users
 app.get("/api/users", getUsers);
 app.get("/api/users/:username", getUserName);
+app.post("/api/users", postNewUser);
 
 // Articles
 app.get("/api/articles", getArticles);

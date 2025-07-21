@@ -1,4 +1,8 @@
-const { fetchUsers, fetchUserByUserName } = require("../models/users.model");
+const {
+  fetchUsers,
+  fetchUserByUserName,
+  insertUser,
+} = require("../models/users.model");
 
 const getUsers = (request, response) => {
   fetchUsers().then((users) => {
@@ -29,4 +33,26 @@ const getUserName = (request, response, next) => {
     });
 };
 
-module.exports = { getUsers, getUserName };
+const postNewUser = (request, response, next) => {
+  const { username, name, avatar_url } = request.body;
+
+  if (!username || !name || !avatar_url) {
+    return response
+      .status(400)
+      .send({ msg: "400 Bad Request: Missing fields" });
+  }
+
+  insertUser(username, name, avatar_url)
+    .then((newUser) => {
+      response.status(201).send({ user: newUser });
+    })
+    .catch((err) => {
+      if (err.code === "23505") {
+        response.status(400).send({ msg: "Username already exists" });
+      } else {
+        next(err);
+      }
+    });
+};
+
+module.exports = { getUsers, getUserName, postNewUser };

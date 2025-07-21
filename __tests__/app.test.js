@@ -425,3 +425,62 @@ describe("/api/users/:username", () => {
       });
   });
 });
+
+describe("POST /api/users", () => {
+  test("status 201: creates a new user and returns the user object", () => {
+    const newUser = {
+      username: "new_user_123",
+      name: "New User",
+      avatar_url:
+        "https://images.pexels.com/photos/406014/pexels-photo-406014.jpeg",
+    };
+
+    return request(app)
+      .post("/api/users")
+      .send(newUser)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.user).toEqual(
+          expect.objectContaining({
+            username: "new_user_123",
+            name: "New User",
+            avatar_url:
+              "https://images.pexels.com/photos/406014/pexels-photo-406014.jpeg",
+          })
+        );
+      });
+  });
+
+  test("status 400: missing fields in request body", () => {
+    const badUser = {
+      name: "Missing Username",
+      avatar_url:
+        "https://images.pexels.com/photos/406014/pexels-photo-406014.jpeg",
+    };
+
+    return request(app)
+      .post("/api/users")
+      .send(badUser)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request: Missing fields");
+      });
+  });
+
+  test("status 400: username already exists", () => {
+    const duplicateUser = {
+      username: "butter_bridge", // Assuming this user already exists in your test seed
+      name: "Duplicate",
+      avatar_url:
+        "https://images.pexels.com/photos/406014/pexels-photo-406014.jpeg",
+    };
+
+    return request(app)
+      .post("/api/users")
+      .send(duplicateUser)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Username already exists");
+      });
+  });
+});
