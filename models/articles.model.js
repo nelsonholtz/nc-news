@@ -83,15 +83,35 @@ const fetchArticleID = (article_id) => {
     });
 };
 
-const fetchArticleIDComments = (article_id) => {
-  return db
-    .query(
-      "SELECT comment_id, votes, created_at, author, body, article_id FROM comments WHERE article_id = $1 ORDER BY created_at DESC",
-      [article_id]
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+const fetchArticleIDComments = (
+  article_id,
+  sort_by = "created_at",
+  order = "desc"
+) => {
+  const validSortBy = [
+    "comment_id",
+    "votes",
+    "created_at",
+    "author",
+    "body",
+    "article_id",
+  ];
+  const validOrder = ["asc", "desc"];
+
+  if (!validSortBy.includes(sort_by) || !validOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid sort or order query" });
+  }
+
+  const queryStr = `
+    SELECT comment_id, votes, created_at, author, body, article_id 
+    FROM comments 
+    WHERE article_id = $1 
+    ORDER BY ${sort_by} ${order.toUpperCase()};
+  `;
+
+  return db.query(queryStr, [article_id]).then(({ rows }) => {
+    return rows;
+  });
 };
 
 const sendArticleComment = (body, article_id, username) => {
