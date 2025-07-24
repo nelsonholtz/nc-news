@@ -125,6 +125,34 @@ const sendArticleComment = (body, article_id, username) => {
     });
 };
 
+const sendArticle = ({ author, title, body, topic, article_img_url }) => {
+  const imageUrl =
+    article_img_url ||
+    "https://plus.unsplash.com/premium_photo-1707410048990-c9e0fb4e3956?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+
+  const insertQuery = `
+   INSERT INTO articles (author, title, body, topic, article_img_url)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *;
+  `;
+
+  const values = [author, title, body, topic, imageUrl];
+
+  return db.query(insertQuery, values).then(({ rows }) => {
+    const newArticle = rows[0];
+
+    return db
+      .query(
+        `SELECT COUNT(*)::INT AS comment_count FROM comments WHERE article_id = $1;`,
+        [newArticle.article_id]
+      )
+      .then(({ rows }) => {
+        newArticle.comment_count = rows[0].comment_count;
+        return newArticle;
+      });
+  });
+};
+
 const updateArticleVote = (article_id, inc_votes) => {
   if (typeof inc_votes !== "number") {
     return Promise.reject({ status: 400, msg: "400 Bad Request" });
@@ -148,5 +176,6 @@ module.exports = {
   fetchArticleID,
   fetchArticleIDComments,
   sendArticleComment,
+  sendArticle,
   updateArticleVote,
 };

@@ -1,8 +1,10 @@
+const { response } = require("../app");
 const {
   fetchArticles,
   fetchArticleID,
   fetchArticleIDComments,
   sendArticleComment,
+  sendArticle,
   updateArticleVote,
 } = require("../models/articles.model");
 
@@ -54,6 +56,22 @@ const postArticleComment = (request, response, next) => {
     .catch(next);
 };
 
+const postArticle = (request, response, next) => {
+  const { author, title, body, topic, article_img_url } = request.body;
+
+  if (!author || !title || !body || !topic) {
+    return response
+      .status(400)
+      .send({ msg: "400 Bad Request: Missing fields" });
+  }
+
+  sendArticle({ author, title, body, topic, article_img_url })
+    .then((newArticle) => {
+      response.status(201).send({ article: newArticle });
+    })
+    .catch(next);
+};
+
 const patchArticleVote = (request, response, next) => {
   const { article_id } = request.params;
   const { inc_votes } = request.body;
@@ -70,5 +88,6 @@ module.exports = {
   getArticleID,
   getArticleIDComments,
   postArticleComment,
+  postArticle,
   patchArticleVote,
 };

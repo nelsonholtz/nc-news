@@ -157,5 +157,8 @@
         "avatar_url": "https://example.com/newuser-avatar.jpg"
       }
     }
+  },
+  "POST /api/articles": {
+    "description": "Adds a new article. Requires author, title, body, and topic. Optional article_img_url. Responds with the newly created article including comment_count."
   }
 }

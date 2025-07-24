@@ -484,3 +484,32 @@ describe("POST /api/users", () => {
       });
   });
 });
+
+describe("POST /api/articles", () => {
+  test("201: adds and returns a new article with comment_count 0", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "New test article",
+      body: "This is the article body",
+      topic: "mitch",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          author: "butter_bridge",
+          title: "New test article",
+          body: "This is the article body",
+          topic: "mitch",
+          article_img_url: expect.any(String),
+          votes: 0,
+          comment_count: 0,
+          created_at: expect.any(String),
+          article_id: expect.any(Number),
+        });
+      });
+  });
+});

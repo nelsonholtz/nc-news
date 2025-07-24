@@ -18,6 +18,7 @@ const {
   getArticleID,
   getArticleIDComments,
   postArticleComment,
+  postArticle,
   patchArticleVote,
 } = require("./controllers/articles.controller.js");
 
@@ -53,6 +54,7 @@ app.get("/api/articles/:article_id", getArticleID);
 app.patch("/api/articles/:article_id", patchArticleVote);
 app.get("/api/articles/:article_id/comments", getArticleIDComments);
 app.post("/api/articles/:article_id/comments", postArticleComment);
+app.post("/api/articles", postArticle);
 
 // Comments
 app.patch("/api/comments/:comment_id", patchCommentVote);
