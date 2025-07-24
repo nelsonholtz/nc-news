@@ -20,6 +20,7 @@ const {
   postArticleComment,
   postArticle,
   patchArticleVote,
+  deleteArticleByID,
 } = require("./controllers/articles.controller.js");
 
 const {
@@ -55,6 +56,7 @@ app.patch("/api/articles/:article_id", patchArticleVote);
 app.get("/api/articles/:article_id/comments", getArticleIDComments);
 app.post("/api/articles/:article_id/comments", postArticleComment);
 app.post("/api/articles", postArticle);
+app.delete("/api/articles/:article_id", deleteArticleByID);
 
 // Comments
 app.patch("/api/comments/:comment_id", patchCommentVote);
@@ -63,6 +65,8 @@ app.delete("/api/comments/:comment_id", deleteCommentById);
 // === Error Handling ===
 
 app.use((err, req, res, next) => {
+  console.error("Error caught by middleware:", err);
+
   if (err.status) {
     return res.status(err.status).send({ msg: err.msg });
   }

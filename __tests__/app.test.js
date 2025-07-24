@@ -513,3 +513,25 @@ describe("POST /api/articles", () => {
       });
   });
 });
+
+describe.only("DELETE /api/article/:article_id", () => {
+  test("204: Responds with the given article ID deleted", () => {
+    return request(app).delete("/api/articles/2").expect(204);
+  });
+  test("status: 400, responds with an error message when passed a bad article ID", () => {
+    return request(app)
+      .delete("/api/articles/:notAnID")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+  test("status: 404, responds with an error messgae when attemping to delete a ID that does not exist", () => {
+    return request(app)
+      .delete("/api/articles/99999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404 Not Found");
+      });
+  });
+});

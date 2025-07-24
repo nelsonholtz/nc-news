@@ -171,6 +171,23 @@ const updateArticleVote = (article_id, inc_votes) => {
     });
 };
 
+const removeArticleID = (article_id) => {
+  const articleIDNumber = Number(article_id);
+  if (isNaN(articleIDNumber)) {
+    return Promise.reject({ status: 400, msg: "400 Bad Request" });
+  }
+  return db
+    .query("DELETE FROM articles WHERE article_id = $1 RETURNING *", [
+      articleIDNumber,
+    ])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "404 Not Found" });
+      }
+      return;
+    });
+};
+
 module.exports = {
   fetchArticles,
   fetchArticleID,
@@ -178,4 +195,5 @@ module.exports = {
   sendArticleComment,
   sendArticle,
   updateArticleVote,
+  removeArticleID,
 };

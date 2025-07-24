@@ -6,6 +6,7 @@ const {
   sendArticleComment,
   sendArticle,
   updateArticleVote,
+  removeArticleID,
 } = require("../models/articles.model");
 
 const getArticles = (request, response, next) => {
@@ -83,6 +84,16 @@ const patchArticleVote = (request, response, next) => {
     .catch(next);
 };
 
+const deleteArticleByID = (request, response, next) => {
+  const { article_id } = request.params;
+
+  removeArticleID(article_id)
+    .then(() => {
+      response.status(204).send();
+    })
+    .catch(next);
+};
+
 module.exports = {
   getArticles,
   getArticleID,
@@ -90,4 +101,5 @@ module.exports = {
   postArticleComment,
   postArticle,
   patchArticleVote,
+  deleteArticleByID,
 };
