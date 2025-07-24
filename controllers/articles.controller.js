@@ -27,8 +27,9 @@ const getArticleID = (request, response, next) => {
 
 const getArticleIDComments = (request, response, next) => {
   const { article_id } = request.params;
+  const { sort_by = "created_at", order = "desc" } = request.query;
 
-  fetchArticleIDComments(article_id)
+  fetchArticleIDComments(article_id, sort_by, order)
     .then((comments) => {
       response.status(200).send({ comments: comments });
     })
