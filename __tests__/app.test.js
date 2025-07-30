@@ -514,7 +514,7 @@ describe("POST /api/articles", () => {
   });
 });
 
-describe.only("DELETE /api/article/:article_id", () => {
+describe("DELETE /api/article/:article_id", () => {
   test("204: Responds with the given article ID deleted", () => {
     return request(app).delete("/api/articles/2").expect(204);
   });
@@ -532,6 +532,37 @@ describe.only("DELETE /api/article/:article_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("404 Not Found");
+      });
+  });
+});
+
+describe("POST /api/topics", () => {
+  test("201: responds with the newly added topic", () => {
+    const newTopic = {
+      slug: "mindfulness",
+      description: "The art of being present",
+    };
+
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then((res) => {
+        expect(res.body.topic).toEqual({
+          slug: "mindfulness",
+          description: "The art of being present",
+          img_url: null,
+        });
+      });
+  });
+
+  test("400: responds with error if slug or description is missing", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "missing-desc" })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Both slug and description are required");
       });
   });
 });

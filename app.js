@@ -11,7 +11,7 @@ app.use(express.json());
 app.use("/", express.static("Public"));
 
 // === Controllers ===
-const { getTopics } = require("./controllers/topic.controllers.js");
+const { getTopics, postTopics } = require("./controllers/topic.controllers.js");
 
 const {
   getArticles,
@@ -43,6 +43,7 @@ app.get("/api", (req, res) => {
 
 // Topics
 app.get("/api/topics", getTopics);
+app.post("/api/topics", postTopics);
 
 // Users
 app.get("/api/users", getUsers);
